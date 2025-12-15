@@ -90,7 +90,9 @@ if (config::get(config = general_config)$run_pekel) {
         check_drive_parent_folder
         tryCatch({
           drive_auth(siteSR_config$google_email)
-          drive_ls(paste0("pekel_v", b_yml$run_date))
+          zz = drive_ls(paste0("pekel_v", b_yml$run_date))
+          if(inherits(zz, 'dribble') && nrow(zz) == 0) stop()
+          # drive_ls(file.path('~/aquamatch_siteSR', 'pekel_files', paste0("pekel_v", b_yml$run_date)))
         }, error = function(e) {
           # if the outpath doesn't exist, create it
           drive_mkdir(name = paste0("pekel_v", b_yml$run_date),
@@ -196,6 +198,12 @@ if (config::get(config = general_config)$run_pekel) {
         drive_auth(email = b_yml$google_email)
         # create the folder path as proj_folder and run_date
         drive_folder = paste0(b_yml$proj_parent_folder, "pekel_v", b_yml$run_date)
+        b_check_pekel_folder
+        #move files to where they're supposed to be (mike edit)
+        files <- drive_ls(path = "~", pattern = "^Pekel_Visibility_")
+        for(i in seq_len(nrow(files))){
+          drive_mv(files$id[i], path = paste0(drive_folder, '/'))
+        }
         # get a list of files in the project file
         drive_ls(path = drive_folder) %>%
           select(name, id)

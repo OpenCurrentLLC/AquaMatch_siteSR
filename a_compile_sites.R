@@ -34,13 +34,13 @@ if (config::get(config = general_config)$compile_locations) {
       name = a_fips_descriptions,
       command = {
         # grab the xml from the National Water Quality Monitoring Council
-        read_xml("https://www.waterqualitydata.us/Codes/statecode?countrycode=US") %>% 
-          xml_find_all(., ".//Code") %>% 
+        read_xml("https://www.waterqualitydata.us/Codes/statecode?countrycode=US") %>%
+          xml_find_all(., ".//Code") %>%
           xml_attr(., "desc")
       },
       packages = c("tidyverse", "xml2")
     ),
-    
+
     # map the descriptions to get all filtered site metadata for WQP
     tar_target(
       name = a_WQP_site_metadata,
@@ -49,7 +49,7 @@ if (config::get(config = general_config)$compile_locations) {
       pattern = map(a_fips_descriptions),
       packages = c("tidyverse", "dataRetrieval")
     ),
-    
+
     # map the descriptions to get all filtered site metadata for WQP
     tar_target(
       name = a_NWIS_site_metadata,
@@ -58,7 +58,7 @@ if (config::get(config = general_config)$compile_locations) {
       pattern = map(a_fips_descriptions),
       packages = c("tidyverse", "dataRetrieval")
     ),
-    
+
     # Project and transform sites as needed - this is done separately since the
     # metadata is not the same across the two data sources (WQP/NWIS)
     tar_target(
@@ -67,50 +67,50 @@ if (config::get(config = general_config)$compile_locations) {
         # use function to harmonize across all CRS
         harmonized_crs <- harmonize_crs(sites = a_WQP_site_metadata)
         # return sf, with only applicable columns
-        harmonized_crs  %>% 
+        harmonized_crs  %>%
           select(org_id = OrganizationIdentifier, loc_id = MonitoringLocationIdentifier,
                  MonitoringLocationTypeName, HUCEightDigitCode, WGS84_Latitude, WGS84_Longitude,
-                 source) %>% 
-          st_drop_geometry() %>% 
-          unique() %>% 
-          rowid_to_column("siteSR_id") %>% 
+                 source) %>%
+          st_drop_geometry() %>%
+          unique() %>%
+          rowid_to_column("siteSR_id") %>%
           mutate(siteSR_id = paste0("WQP_", siteSR_id))
       },
       packages = c("tidyverse", "sf"),
     ),
-    
+
     # NWIS data lat/lon that start with `dec_` are all stored in NAD83
     tar_target(
       name = a_harmonized_NWIS_sites,
       command = {
         # create sf and transform to WGS84
-        to_wgs84 <- a_NWIS_site_metadata %>% 
+        to_wgs84 <- a_NWIS_site_metadata %>%
           st_as_sf(coords = c("dec_long_va", "dec_lat_va"),
                    crs = "EPSG:4269",
                    remove = FALSE) %>%
           st_transform(crs = "EPSG:4326")
-        
+
         # store harmonized Latitude and Longitude in site list
         new_coords <- to_wgs84 %>% st_coordinates()
-        
+
         # add WGS84 lat/long
         to_wgs84$WGS84_Longitude = round(new_coords[,1], 5)
         to_wgs84$WGS84_Latitude = round(new_coords[,2], 5)
-        
+
         # return sf, with only applicable columns
-        to_wgs84  %>% 
-          select(org_id = agency_cd, loc_id = site_no, 
-                 site_tp_cd, WGS84_Latitude, WGS84_Longitude, source) %>% 
-          st_drop_geometry() %>% 
+        to_wgs84  %>%
+          select(org_id = agency_cd, loc_id = site_no,
+                 site_tp_cd, WGS84_Latitude, WGS84_Longitude, source) %>%
+          st_drop_geometry() %>%
           unique() %>%
-          rowid_to_column("siteSR_id") %>% 
+          rowid_to_column("siteSR_id") %>%
           mutate(siteSR_id = paste0("NWIS_", siteSR_id))
       },
       packages = c("tidyverse", "sf"),
     ),
-    
+
     # Collate site lists from AquaMatch Harmonize pipeline --------------------
-    
+
     ## read the ids csv
     tar_file_read(
       name = a_AquaMatch_chla_drive_ids,
@@ -132,32 +132,32 @@ if (config::get(config = general_config)$compile_locations) {
       command = "a_compile_sites/in/tss_drive_ids.csv",
       read = read_csv(!!.x)
     ),
-    
+
     # retrieve site targets
     tar_target(
       name = a_AquaMatch_chla_sites,
       command = {
         a_check_dir_structure
-        retrieve_target(target = "p3_chla_harmonized_site_info", 
+        retrieve_target(target = "p3_chla_harmonized_site_info",
                         id_df = a_AquaMatch_chla_drive_ids,
-                        local_folder = "a_compile_sites/mid/", 
-                        google_email = siteSR_config$google_email, 
+                        local_folder = "a_compile_sites/mid/",
+                        google_email = siteSR_config$google_email,
                         file_type = "rds",
-                        date_stamp = "20240701") %>% 
+                        date_stamp = "20240701") %>%
           filter(!MonitoringLocationIdentifier %in% a_WQP_site_metadata$MonitoringLocationIdentifier)
-      }, 
+      },
       packages = c("tidyverse", "googledrive")
     ),
     tar_target(
       name = a_AquaMatch_doc_sites,
       command = {
         a_check_dir_structure
-        retrieve_target(target = "p3_doc_harmonized_site_info", 
+        retrieve_target(target = "p3_doc_harmonized_site_info",
                         id_df = a_AquaMatch_doc_drive_ids,
-                        local_folder = "a_compile_sites/mid/", 
-                        google_email = siteSR_config$google_email, 
+                        local_folder = "a_compile_sites/mid/",
+                        google_email = siteSR_config$google_email,
                         file_type = "rds",
-                        date_stamp = "20240701") %>% 
+                        date_stamp = "20240701") %>%
           filter(!MonitoringLocationIdentifier %in% a_WQP_site_metadata$MonitoringLocationIdentifier)
       },
       packages = c("tidyverse", "googledrive")
@@ -166,29 +166,29 @@ if (config::get(config = general_config)$compile_locations) {
       name = a_AquaMatch_sdd_sites,
       command = {
         a_check_dir_structure
-        retrieve_target(target = "p3_sdd_harmonized_site_info", 
+        retrieve_target(target = "p3_sdd_harmonized_site_info",
                         id_df = a_AquaMatch_sdd_drive_ids,
-                        local_folder = "a_compile_sites/mid/", 
-                        google_email = siteSR_config$google_email, 
+                        local_folder = "a_compile_sites/mid/",
+                        google_email = siteSR_config$google_email,
                         file_type = "rds",
-                        date_stamp = "20240701") %>% 
+                        date_stamp = "20240701") %>%
           filter(!MonitoringLocationIdentifier %in% a_WQP_site_metadata$MonitoringLocationIdentifier)
-      }, 
+      },
       packages = c("tidyverse", "googledrive")
     ),
-    ## TSS 
+    ## TSS
     tar_target(
       name = a_AquaMatch_tss_sites,
       command = {
         a_check_dir_structure
-        retrieve_target(target = "p3_tss_harmonized_site_info", 
+        retrieve_target(target = "p3_tss_harmonized_site_info",
                         id_df = a_AquaMatch_tss_drive_ids,
-                        local_folder = "a_compile_sites/mid/", 
-                        google_email = siteSR_config$google_email, 
+                        local_folder = "a_compile_sites/mid/",
+                        google_email = siteSR_config$google_email,
                         file_type = "rds",
-                        date_stamp = "20250430") %>% 
+                        date_stamp = "20250430") %>%
           filter(!MonitoringLocationIdentifier %in% a_WQP_site_metadata$MonitoringLocationIdentifier)
-      }, 
+      },
       packages = c("tidyverse", "googledrive")
     ),
     
@@ -200,27 +200,32 @@ if (config::get(config = general_config)$compile_locations) {
                                  a_AquaMatch_doc_sites,
                                  a_AquaMatch_sdd_sites,
                                  a_AquaMatch_tss_sites),
-                            bind_rows) 
-        # harmonize crs, select only the columns we care about and 
-        harmonize_crs(site_list) %>% 
+                            bind_rows)
+        # harmonize crs, select only the columns we care about and
+        d3 <- harmonize_crs(site_list) %>%
           select(org_id = OrganizationIdentifier, loc_id = MonitoringLocationIdentifier,
-                 MonitoringLocationTypeName, HUCEightDigitCode, 
-                 WGS84_Latitude, WGS84_Longitude) %>% 
-          unique() %>% 
-          rowid_to_column("siteSR_id") %>% 
+                 MonitoringLocationTypeName, HUCEightDigitCode,
+                 WGS84_Latitude, WGS84_Longitude) %>%
+          unique() %>%
+          rowid_to_column("siteSR_id") %>%
           mutate(siteSR_id = paste0("AM_", siteSR_id),
                  source = "WQP")
+
+        d3 <- d3 %>%
+          filter(MonitoringLocationTypeName == 'River/Stream') %>%
+          slice(seq(1, 10001, 1000))
+                 # loc_id == '21PA_WQX-WQN0231')
       }
     ),
-    
+
     # Collate all locations together --------------------------------------
-    
+
     tar_target(
       name = a_all_site_locations,
       command = {
         # join together
         sites <- reduce(list(a_harmonized_NWIS_sites, a_harmonized_WQP_sites, a_AquaMatch_sites %>% st_drop_geometry()),
-                        full_join) %>%  
+                        full_join) %>%
           setDT(.)
         sites[, harmonized_site_type := case_when(site_tp_cd == "ST" ~ "Stream",
                                                   site_tp_cd %in% c("ST-CA", "ST-DCH") ~ "Ditch/Canal",
@@ -232,21 +237,26 @@ if (config::get(config = general_config)$compile_locations) {
                                                   MonitoringLocationTypeName == "Estuary" ~ "Estuary",
                                                   grepl("canal|ditch", MonitoringLocationTypeName, ignore.case = T) ~ "Ditch/Canal",
                                                   .default = "Other")]
-        sites %>% 
-          relocate(siteSR_id, org_id, loc_id, harmonized_site_type, WGS84_Latitude, WGS84_Longitude, source, HUCEightDigitCode) %>% 
-          filter(WGS84_Latitude != 0 & WGS84_Longitude != 0 & abs(WGS84_Latitude) != 1 & abs(WGS84_Longitude) != 1) %>% 
+        sites <- sites %>%
+          relocate(siteSR_id, org_id, loc_id, harmonized_site_type, WGS84_Latitude, WGS84_Longitude, source, HUCEightDigitCode) %>%
+          filter(WGS84_Latitude != 0 & WGS84_Longitude != 0 & abs(WGS84_Latitude) != 1 & abs(WGS84_Longitude) != 1) %>%
           st_as_sf(coords = c("WGS84_Longitude", "WGS84_Latitude"),
-                   crs = "EPSG:4326", 
-                   remove = FALSE) 
+                   crs = "EPSG:4326",
+                   remove = FALSE)
+
+        sites %>%
+          filter(harmonized_site_type == 'Stream') %>%
+          slice(seq(1, 100001, 10000))
       },
       packages = c("data.table", "tidyverse", "sf", "targets")
-    ), 
+    ),
     
     # save this as a .rds file in drive
     tar_target(
       name = a_save_all_site_locs_drive,
       command = {
-        export_single_target(target = a_all_site_locations,
+        # export_single_target(target = a_all_site_locations,
+        export_single_target(target = load_sites,
                              drive_path = check_targets_drive,
                              stable = FALSE,
                              google_email = siteSR_config$google_email,
@@ -260,8 +270,9 @@ if (config::get(config = general_config)$compile_locations) {
     # save this as a .csv file locally for GEE run
     tar_target(
       name = a_save_all_site_locs_local,
-      command = a_all_site_locations %>% 
-        st_drop_geometry() %>% 
+      # command = a_all_site_locations %>%
+      command = load_sites %>%
+        st_drop_geometry() %>%
         write_csv(., "a_compile_sites/out/a_all_site_locations.csv")
     ),
     
@@ -270,13 +281,21 @@ if (config::get(config = general_config)$compile_locations) {
       name = a_all_site_locs_Drive_id,
       command = {
         get_file_ids(google_email = siteSR_config$google_email,
-                     drive_folder = check_targets_drive, 
-                     file_path = "a_compile_sites/out/all_site_locations_drive_id.csv", 
+                     drive_folder = check_targets_drive,
+                     file_path = "a_compile_sites/out/all_site_locations_drive_id.csv",
                      depend = list(a_save_all_site_locs_local, a_save_all_site_locs_drive),
                      filter_by = "a_all_site_locations")
       },
       packages = c("tidyverse", "googledrive")
     ),
+    
+    tar_target(
+      name = load_sites,
+      command = {
+        sites <- read_csv('a_compile_sites/out/a_all_site_locations.csv')
+        sites
+      },
+    ), 
     
     # Associate location with NHD waterbody and flowline ------------------------
     
@@ -284,7 +303,8 @@ if (config::get(config = general_config)$compile_locations) {
     # the HUC assignment step to reduce long processing times per branch
     tar_target(
       name = a_grouped_sites,
-      command = a_all_site_locations %>% 
+      # command = a_all_site_locations %>% 
+      command = load_sites %>% 
         group_by(source, harmonized_site_type) %>% 
         tar_group(),
       iteration = "group",

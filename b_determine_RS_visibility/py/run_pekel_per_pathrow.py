@@ -91,7 +91,7 @@ with open('b_determine_RS_visibility/run/current_pathrow.txt', 'r') as file:
   pathrows = file.read()
 
 # read locations and filtere for this pathrow
-locations = (pd.read_csv('b_determine_RS_visibility/run/locs_with_wrs_for_pekel.csv', 
+locations = (pd.read_csv('b_determine_RS_visibility/run/locs_with_WRS_for_pekel.csv', 
                       dtype = ({"id": str, 
                                 "Latitude": np.float64, 
                                 "Longitude": np.float64, 
@@ -161,7 +161,7 @@ def process_subset(df_subset, chunk, chunk_size, wrs_pathrow):
     #Define a data export 
     dataOut = (ee.batch.Export.table.toDrive(collection = outdata,
                                             description = "Pekel_Visibility_" + wrs_pathrow + "_" + str(chunk),
-                                            folder = out_folder,
+                                            # folder = out_folder,
                                             fileFormat = 'csv'))
     
     # check for number of tasks running

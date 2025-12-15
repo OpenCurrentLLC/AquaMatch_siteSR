@@ -82,7 +82,7 @@ config_targets <- list(
         drive_mkdir(name = "targets",
                     path = siteSR_config$drive_project_folder)
       })
-      return(paste0(siteSR_config$drive_project_folder, "targets/"))
+      return(file.path(siteSR_config$drive_project_folder, "targets/"))
     },
     packages = "googledrive",
     cue = tar_cue("always")
