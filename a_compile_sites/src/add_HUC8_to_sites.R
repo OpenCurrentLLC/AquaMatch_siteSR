@@ -16,6 +16,9 @@
 add_HUC8_to_sites <- function(sites, hucs) {
   # for each site, get the HUC8 associated with it and assign that value to the
   # upstream dataset 
+  if(! inherits(sites, 'sf')){
+    sites <- st_as_sf(sites, coords = c(x = 'WGS84_Longitude', y = 'WGS84_Latitude'), crs = 4326)
+  }
   transformed_sites <- st_transform(sites, st_crs(hucs))
   HUC08_assigned <- st_join(transformed_sites, hucs %>% select(assigned_HUC = huc8)) %>% 
     st_transform(., crs = "EPSG:4326") 

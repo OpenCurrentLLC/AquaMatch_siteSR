@@ -1959,7 +1959,7 @@ def process_subset(df_subset, chunk, chunk_size):
       locs_srname_457_D1 = proj+'_site_LS457_C2_SRST_DSWE1_'+str(pr)+'_'+str(chunk)+'_v'+run_date
       locs_dataOut_457_D1 = (ee.batch.Export.table.toDrive(collection = locs_out_457_D1,
                                               description = locs_srname_457_D1,
-                                              folder = folder_version,
+                                              #folder = folder_version,
                                               fileFormat = 'csv',
                                               selectors = ['system:index',
                                               'med_Blue', 'med_Green', 'med_Red', 'med_Nir', 'med_Swir1', 'med_Swir2', 
@@ -1984,7 +1984,7 @@ def process_subset(df_subset, chunk, chunk_size):
       locs_srname_457_D1a = proj+'_site_LS457_C2_SRST_DSWE1a_'+str(pr)+'_'+str(chunk)+'_v'+run_date
       locs_dataOut_457_D1a = (ee.batch.Export.table.toDrive(collection = locs_out_457_D1a,
                                               description = locs_srname_457_D1a,
-                                              folder = folder_version,
+                                              #folder = folder_version,
                                               fileFormat = 'csv',
                                               selectors = ['system:index',
                                               'med_Blue', 'med_Green', 'med_Red', 'med_Nir', 'med_Swir1', 'med_Swir2', 
@@ -2012,7 +2012,7 @@ def process_subset(df_subset, chunk, chunk_size):
       locs_srname_457_D1 = proj+'_site_LS457_C2_SRST_DSWE1_'+str(pr)+'_'+str(chunk)+'_v'+run_date
       locs_dataOut_457_D1 = (ee.batch.Export.table.toDrive(collection = locs_out_457_D1,
                                               description = locs_srname_457_D1,
-                                              folder = folder_version,
+                                              #folder = folder_version,
                                               fileFormat = 'csv',
                                               selectors = ['system:index',
                                               'med_Blue', 'med_Green', 'med_Red', 'med_Nir', 'med_Swir1', 'med_Swir2', 
@@ -2043,7 +2043,7 @@ def process_subset(df_subset, chunk, chunk_size):
     locs_srname_457_D3 = proj+'_site_LS457_C2_SRST_DSWE3_'+str(pr)+'_'+str(chunk)+'_v'+run_date
     locs_dataOut_457_D3 = (ee.batch.Export.table.toDrive(collection = locs_out_457_D3,
                                             description = locs_srname_457_D3,
-                                            folder = folder_version,
+                                            #folder = folder_version,
                                             fileFormat = 'csv',
                                               selectors = ['system:index',
                                               'med_Blue', 'med_Green', 'med_Red', 'med_Nir', 'med_Swir1', 'med_Swir2', 
@@ -2092,7 +2092,7 @@ def process_subset(df_subset, chunk, chunk_size):
       locs_srname_89_D1 = proj+'_site_LS89_C2_SRST_DSWE1_'+str(pr)+'_'+str(chunk)+'_v'+run_date
       locs_dataOut_89_D1 = (ee.batch.Export.table.toDrive(collection = locs_out_89_D1,
                                               description = locs_srname_89_D1,
-                                              folder = folder_version,
+                                              #folder = folder_version,
                                               fileFormat = 'csv',
                                               selectors = ['system:index',
                                               'med_Aerosol', 'med_Blue', 'med_Green', 'med_Red', 'med_Nir', 'med_Swir1', 'med_Swir2', 
@@ -2118,7 +2118,7 @@ def process_subset(df_subset, chunk, chunk_size):
       locs_srname_89_D1a = proj+'_site_LS89_C2_SRST_DSWE1a_'+str(pr)+'_'+str(chunk)+'_v'+run_date
       locs_dataOut_89_D1a = (ee.batch.Export.table.toDrive(collection = locs_out_89_D1a,
                                               description = locs_srname_89_D1a,
-                                              folder = folder_version,
+                                              #folder = folder_version,
                                               fileFormat = 'csv',
                                               selectors = ['system:index',
                                               'med_Aerosol', 'med_Blue', 'med_Green', 'med_Red', 'med_Nir', 'med_Swir1', 'med_Swir2', 
@@ -2145,7 +2145,7 @@ def process_subset(df_subset, chunk, chunk_size):
       locs_srname_89_D1 = proj+'_site_LS89_C2_SRST_DSWE1_'+str(pr)+'_'+str(chunk)+'_v'+run_date
       locs_dataOut_89_D1 = (ee.batch.Export.table.toDrive(collection = locs_out_89_D1,
                                               description = locs_srname_89_D1,
-                                              folder = folder_version,
+                                              #folder = folder_version,
                                               fileFormat = 'csv',
                                               selectors = ['system:index',
                                               'med_Aerosol', 'med_Blue', 'med_Green', 'med_Red', 'med_Nir', 'med_Swir1', 'med_Swir2', 
@@ -2174,7 +2174,7 @@ def process_subset(df_subset, chunk, chunk_size):
     locs_srname_89_D3 = proj+'_site_LS89_C2_SRST_DSWE3_'+str(pr)+'_'+str(chunk)+'_v'+run_date
     locs_dataOut_89_D3 = (ee.batch.Export.table.toDrive(collection = locs_out_89_D3,
                                             description = locs_srname_89_D3,
-                                            folder = folder_version,
+                                            #folder = folder_version,
                                             fileFormat = 'csv',
                                             selectors = ['system:index',
                                               'med_Aerosol', 'med_Blue', 'med_Green', 'med_Red', 'med_Nir', 'med_Swir1', 'med_Swir2', 
@@ -2240,7 +2240,7 @@ process_dataframe_in_chunks(locations_subset)
 meta_srname_457 = proj+"_metadata_LS457_C2_"+str(pr)+"_v"+run_date
 meta_dataOut_457 = (ee.batch.Export.table.toDrive(collection = ls457,
                                         description = meta_srname_457,
-                                        folder = folder_version,
+                                        #folder = folder_version,
                                         fileFormat = "csv"))
 
 #Send next task.                                        
@@ -2256,7 +2256,7 @@ meta_dataOut_457.start()
 meta_srname_89 = proj+"_metadata_LS89_C2_"+str(pr)+"_v"+run_date
 meta_dataOut_89 = (ee.batch.Export.table.toDrive(collection = ls89,
                                         description = meta_srname_89,
-                                        folder = folder_version,
+                                        #folder = folder_version,
                                         fileFormat = "csv"))
 
 #Send next task.                                        

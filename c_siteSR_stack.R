@@ -141,11 +141,17 @@ if (config::get(config = general_config)$run_GEE) {
       name = c_siteSR_contents,
       command = {
         # make sure that siteSR tasks complete
+        c_check_siteSR_folder
         c_siteSR_tasks_complete
         # authorize Google
         drive_auth(email = b_yml$google_email)
         # create the folder path as proj_folder and run_date
         drive_folder <- paste0(b_yml$proj_parent_folder, "siteSR_v", b_yml$run_date)
+        #move files to where they're supposed to be (mike edit)
+        files <- drive_ls(path = "~", pattern = paste0('^', b_yml$proj, '_(site|metadata)_'))
+        for(i in seq_len(nrow(files))){
+          drive_mv(files$id[i], path = paste0(drive_folder, '/'))
+        }
         # get a list of files in the project file
         drive_ls(path = drive_folder) %>% 
           select(name, id)

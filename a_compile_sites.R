@@ -429,10 +429,16 @@ if (config::get(config = general_config)$compile_locations) {
           st_drop_geometry() %>% 
           # remove the targets grouping column
           select(-tar_group)
-        collated_sites <- full_join(waterbody_info,
-                                    flowline_info) %>%
-          # add in spatial info from above
-          full_join(georef_sites, .)
+        
+        if(nrow(waterbody_info)){
+          collated_sites <- full_join(waterbody_info,
+                                      flowline_info) %>%
+            # add in spatial info from above
+            full_join(georef_sites, .)
+        } else {
+          collated_sites <- flowline_info %>%
+            full_join(georef_sites, .)
+        }
         # get the intersections data to add to this
         waterbody_intersections <- map(a_add_NHD_waterbody_info,
                                        function(w) {
@@ -450,11 +456,26 @@ if (config::get(config = general_config)$compile_locations) {
         # turns out there are a few overlapping NHD waterbody polygons that create
         # a handful of extra rows here. For the purposes of this workflow, we'll
         # just grab the larger of the two overlapping polygons.
+        if(nrow(waterbody_intersections)){
+          collated_sites <- collated_sites %>%
+            left_join(., waterbody_intersections)
+            arrange(-wb_areasqkm)
+        } else {
+          collated_sites <- collated_sites %>% 
+            mutate(wb_areasqkm = NA_real_,
+                   flag_wb = NA_real_,
+                   dist_to_shore = NA_real_,
+                   wb_gnis_id = NA_character_,
+                   wb_gnis_name = NA_character_,
+                   wb_nhd_id = NA_character_)
+        }
+        
         collated_sites <- collated_sites %>%
-          left_join(., waterbody_intersections) %>%
+          # left_join(., waterbody_intersections) %>%
           left_join(., flowline_intersections) %>%
           arrange(-wb_areasqkm) %>%
           slice(1, .by = siteSR_id)
+        
         # fill in flags where HUC8 was not able to be assigned
         collated_sites <- collated_sites %>%
           mutate(flag_wb = if_else(is.na(flag_wb), 4, flag_wb),

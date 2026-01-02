@@ -207,7 +207,7 @@ d_qa_stack <- list(
       
       # check to see if this is a single file, or multiple and needs additional
       # data handling
-      if (length(fns_dswe > 1)) {
+      if (length(fns_dswe) > 1) {
         # create a temp directory for the temporary Arrow dataset
         temp_dataset_dir <- tempfile("arrow_ds_")
         dir.create(temp_dataset_dir)
@@ -242,9 +242,10 @@ d_qa_stack <- list(
         gc()
         Sys.sleep(5)
         
-      } else {
+      } else if(length(fns_dswe) == 1){
         
-        data <- fread(fn)
+        # data <- fread(fn)
+        data <- fread(fns_dswe)
         write_feather(data, out_fp, compression = "lz4")
         
       }

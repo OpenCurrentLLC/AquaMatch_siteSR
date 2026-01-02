@@ -71,6 +71,8 @@ collate_csvs_from_drive <- function(file_type = NULL,
   files <- list.files(from_directory,
                       full.names = TRUE) 
   
+  if(! length(files)) return(NULL)
+  
   # check to see if files need to subset for type
   if (!is.null(file_type)) {
     # subset for file type  
