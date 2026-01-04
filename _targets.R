@@ -76,13 +76,13 @@ config_targets <- list(
       check_drive_parent_folder
       tryCatch({
         drive_auth(siteSR_config$google_email)
-        drive_ls(paste0(siteSR_config$drive_project_folder, "targets/"))
+        drive_ls(gsub('//', '/', file.path(siteSR_config$drive_project_folder, "targets/")))
       }, error = function(e) {
         # if the outpath doesn't exist, create it along with a "stable" subfolder
         drive_mkdir(name = "targets",
                     path = siteSR_config$drive_project_folder)
       })
-      return(file.path(siteSR_config$drive_project_folder, "targets/"))
+      return(gsub('//', '/', file.path(siteSR_config$drive_project_folder, "targets/")))
     },
     packages = "googledrive",
     cue = tar_cue("always")

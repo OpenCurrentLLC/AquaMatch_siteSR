@@ -316,9 +316,13 @@ if (config::get(config = general_config)$update_and_share) {
     
     tar_target(
       name = d_send_feather_files_to_Drive,
-      command = export_single_file(file_path = d_make_Landsat_feather_files,
-                                   drive_path = d_check_Drive_siteSR_folder,
-                                   google_email = siteSR_config$google_email),
+      command = {
+        if(any(file.exists(d_make_Landsat_feather_files))){
+          export_single_file(file_path = d_make_Landsat_feather_files,
+                             drive_path = d_check_Drive_siteSR_folder,
+                             google_email = siteSR_config$google_email)
+        }
+      },
       packages = c("tidyverse", "googledrive"),
       pattern = map(d_make_Landsat_feather_files),
       cue = tar_cue("always")

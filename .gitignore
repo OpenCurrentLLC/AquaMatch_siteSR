@@ -47,3 +47,4 @@ env/*
 
 # Scratch files
 scratch/*
+*.swp
