@@ -21,7 +21,7 @@ for task in ts:
 # loop to track if n_active is greater than zero
 while (n_active > 0):
   # if it is, wait 2 minutes
-  time.sleep(120)
+  time.sleep(30)
   # and then repeat!
   ts = list(ee.batch.Task.list())
   n_active = 0

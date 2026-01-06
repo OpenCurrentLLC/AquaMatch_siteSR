@@ -370,6 +370,7 @@ if (config::get(config = general_config)$compile_locations) {
         dt <- map(a_sites_add_HUC8, setDT) %>% 
           rbindlist() 
         unique(str_sub(dt[!is.na(assigned_HUC), assigned_HUC], 1, 4))
+        # if (length(h) == 0) "EMPTY" else h
       },
       packages = c("data.table", "tidyverse")
     ),

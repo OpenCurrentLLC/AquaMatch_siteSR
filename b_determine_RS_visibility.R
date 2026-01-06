@@ -62,7 +62,6 @@ if (config::get(config = general_config)$run_pekel) {
     tar_target(
       name = b_export_yml,
       command = {
-        browser()
         export_single_target(target = b_yml,
                              drive_path = check_targets_drive,
                              google_email = b_yml$google_email,

@@ -5,10 +5,10 @@
 # indicated. All inputs are case-sensitive.
 
 local_settings:
-- pekel_data_dir: "/home/mike/git/others_projects/AquaMatch_siteSR/a_compile_sites/out/" # point to the *full* directory path where your location 
+- pekel_data_dir: "/home/mike/git/opencurrent/global_model/AquaMatch_siteSR/a_compile_sites/out/" # point to the *full* directory path where your location 
 # information is stored - this path must end with a '/'
 - pekel_location_file: "a_all_site_locations.csv" # name of the *.csv* file that contains the location information
-- siteSR_data_dir: "/home/mike/git/others_projects/AquaMatch_siteSR/b_determine_RS_visibility/run/" # point to the *full* directory path where your location 
+- siteSR_data_dir: "/home/mike/git/opencurrent/global_model/AquaMatch_siteSR/b_determine_RS_visibility/run/" # point to the *full* directory path where your location 
 - siteSR_location_file: "visible_locs_with_WRS.csv"
 - unique_id: "siteSR_id" # this is the column that stores the unique identifier for each 
 # site or polygon and should not contain any special characters
@@ -26,7 +26,7 @@ google_settings:
 # files will include this prefix.
 - proj_folder: "OC_SR" # this is the folder name where the GEE data will be save to 
 # Google Drive. If it doesn't exist, it will be created.
-- proj_parent_folder: "~/OC_SR_data/" # this is the parent folder that 
+- proj_parent_folder: "~/OC_SR_data4/" # this is the parent folder that 
 # the siteSR data is exported to, located at the root directory of your Google Drive.
 # must start with "~/" and end with "/"
 - ee_proj: "macrosheds-293818" # this is the ee project name you are running your pulls from

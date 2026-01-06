@@ -45,14 +45,16 @@ if (config::get(config = general_config)$run_GEE) {
       name = c_check_siteSR_folder,
       command = {
         check_drive_parent_folder
-        tryCatch({
-          drive_auth(b_yml$google_email)
-          drive_ls(paste0("siteSR_v", b_yml$run_date))
-        }, error = function(e) {
+        # tryCatch({
+        drive_auth(b_yml$google_email)
+        z <- try(drive_ls(paste0("siteSR_v", b_yml$run_date)))
+        # }, error = function(e) {
+        if(inherits(z, 'try-error') || nrow(z) == 0){
           # if the outpath doesn't exist, create it
           drive_mkdir(name = paste0("siteSR_v", b_yml$run_date),
                       path = b_yml$proj_parent_folder)
-        })
+        }
+        # })
       },
       packages = "googledrive",
       cue = tar_cue("always")
@@ -289,7 +291,9 @@ if (config::get(config = general_config)$run_GEE) {
                                    drive_path = c_check_Drive_collated_folder,
                                    google_email = b_yml$google_email),
       packages = c("tidyverse", "googledrive"),
-      pattern = c_collated_siteSR_files
+      pattern = c_collated_siteSR_files,
+      
+      deployment = 'main'
     ),
     
     tar_target(
