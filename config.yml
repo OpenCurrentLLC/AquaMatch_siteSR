@@ -9,7 +9,7 @@ default:
   
   # location where you want to store the output of the pipeline, required if any of
   # `update_and_share`, `compile_locations`, `run_pekel`, or `run_GEE` is set to TRUE
-  drive_project_folder: "~/OC_SR_data4/" # note: must start with "~/" and end with "/"
+  drive_project_folder: "~/OC_SR_data5/" # note: must start with "~/" and end with "/"
   
   # should pipeline perform new site collation for all WQP/NWIS surface water sites?
   # FALSE (default) = use pre-existing collated sites
@@ -39,7 +39,7 @@ default:
   # FALSE (default) = files are collated locally, but not uploaded to Google Drive
   # TRUE = files are collated locall AND uploaded to drive. 
   # TRUE setting requires drive_project_folder designation
-  update_and_share: FALSE
+  update_and_share: TRUE
 
 
 # Update the stable dataset versions, intended to be used by the ROSS team
