@@ -26,14 +26,14 @@ google_settings:
 # files will include this prefix.
 - proj_folder: "OC_SR" # this is the folder name where the GEE data will be save to 
 # Google Drive. If it doesn't exist, it will be created.
-- proj_parent_folder: "~/OC_SR_data5/" # this is the parent folder that 
+- proj_parent_folder: "~/OC_SR_data6/" # this is the parent folder that 
 # the siteSR data is exported to, located at the root directory of your Google Drive.
 # must start with "~/" and end with "/"
 - ee_proj: "macrosheds-293818" # this is the ee project name you are running your pulls from
-- run_date: "2026-01-06" # date of run for versioning, must be in YYYY-MM-DD foramt
+- run_date: "2026-02-27" # date of run for versioning, must be in YYYY-MM-DD foramt
 
 temporal_settings: 
-- start_date: "2025-03-01" # earliest data of satellite data to be acquired; 
+- start_date: "1983-01-01" # earliest data of satellite data to be acquired; 
 # earliest data available is 1983-01-01
 - end_date: "today" # latest data of satellite data to be acquired; if 'today' 
 # is used, the date will be set to the current date

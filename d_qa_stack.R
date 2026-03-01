@@ -187,6 +187,7 @@ d_qa_stack <- list(
   tar_target(
     name = d_make_Landsat_feather_files,
     command = {
+      
       # create version folder for output
       if (!dir.exists(file.path("d_qa_stack/out/", b_yml$run_date))) {
         dir.create(file.path("d_qa_stack/out/", b_yml$run_date))
@@ -215,6 +216,7 @@ d_qa_stack <- list(
         walk(fns_dswe, function(fn) {
           # read chunk
           chunk <- fread(fn)
+          if(! nrow(chunk)) return()
           setDT(chunk)
           
           # add source_file column to partition by
@@ -232,15 +234,17 @@ d_qa_stack <- list(
         ds <- open_dataset(temp_dataset_dir, format = "feather")
         
         # and grab all the data and write the feather file
-        ds %>% 
-          collect() %>% 
-          select(-source_file) %>% 
-          write_feather(., out_fp, compression = "lz4")
-        
-        # housekeeping
-        unlink(temp_dataset_dir, recursive = TRUE)
-        gc()
-        Sys.sleep(5)
+        if(nrow(ds)){
+          ds %>% 
+            collect() %>% 
+            select(-source_file) %>% 
+            write_feather(., out_fp, compression = "lz4")
+          
+          # housekeeping
+          unlink(temp_dataset_dir, recursive = TRUE)
+          gc()
+          Sys.sleep(5)
+        }
         
       } else if(length(fns_dswe) == 1){
         

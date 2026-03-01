@@ -397,6 +397,11 @@ if (config::get(config = general_config)$compile_locations) {
       name = a_add_NHD_flowline_info,
       command = {
         a_check_dir_structure
+        print('a')
+        print(a_HUC4_list)
+        print('b')
+        print(a_sites_add_HUC8)
+        browser()
         add_NHD_flowline_to_sites(sites_with_huc = a_sites_add_HUC8,
                                   huc4 = a_HUC4_list,
                                   GEE_buffer = as.numeric(b_yml$site_buffer),
