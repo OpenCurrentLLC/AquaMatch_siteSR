@@ -9,7 +9,7 @@ default:
   
   # location where you want to store the output of the pipeline, required if any of
   # `update_and_share`, `compile_locations`, `run_pekel`, or `run_GEE` is set to TRUE
-  drive_project_folder: "~/OC_SR_data6/" # note: must start with "~/" and end with "/"
+  drive_project_folder: "~/OC_SR_data7_europe/" # note: must start with "~/" and end with "/"
   
   # should pipeline perform new site collation for all WQP/NWIS surface water sites?
   # FALSE (default) = use pre-existing collated sites

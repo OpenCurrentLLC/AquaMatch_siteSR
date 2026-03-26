@@ -14,7 +14,8 @@ general_config <- "default"
 
 controller_cores <- crew_controller_local(
   workers = parallel::detectCores()-1,
-  seconds_idle = 12
+  seconds_idle = 12,
+  crashes_max = 20
 )
 
 

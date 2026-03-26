@@ -262,23 +262,21 @@ if (config::get(config = general_config)$run_GEE) {
       name = c_check_Drive_collated_folder,
       command =  {
         check_drive_parent_folder
+        drive_auth(b_yml$google_email)
+        if (b_yml$proj_parent_folder != "") {
+          parent_folder <- b_yml$proj_parent_folder
+          version_path <- paste0(b_yml$proj_parent_folder,
+                                 paste0("collated_raw_v", b_yml$run_date, "/"))
+        } else {
+          parent_folder <- b_yml$proj_folder
+          version_path <- paste0(b_yml$proj_folder,
+                                 paste0("collated_raw_v", b_yml$run_date, "/"))
+        }
         tryCatch({
-          drive_auth(b_yml$google_email)
-          if (b_yml$proj_parent_folder != "") {
-            parent_folder <- b_yml$proj_parent_folder
-            version_path <- paste0(b_yml$proj_parent_folder,
-                                   paste0("collated_raw_v", b_yml$run_date, "/"))
-            
-          } else {
-            parent_folder <- b_yml$proj_folder
-            version_path <- paste0(b_yml$proj_folder,
-                                   paste0("collated_raw_v", b_yml$run_date, "/"))
-          }
           # check for doubles!
           drive_ls(version_path)
         }, error = function(e) {
-          # if there is an error, check both the 'collated_raw' folder and the 'version'
-          # folder
+          # if there is an error, create the folder
           drive_mkdir(path = parent_folder, name = paste0("collated_raw_v", b_yml$run_date))
         })
         return(version_path)

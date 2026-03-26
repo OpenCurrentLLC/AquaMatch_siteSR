@@ -340,7 +340,8 @@ if (config::get(config = general_config)$compile_locations) {
                 layer = "WBDHU8") %>% 
           st_make_valid()
       },
-      packages = c("nhdplusTools", "sf")
+      packages = c("nhdplusTools", "sf"),
+      deployment = "main"
     ),
     
     tar_target(
@@ -359,6 +360,7 @@ if (config::get(config = general_config)$compile_locations) {
       pattern = map(a_grouped_sites),
       iteration = "list",
       packages = c("tidyverse", "sf", "targets", "nhdplusTools"),
+      deployment = "main"
     ),
     
     # Create the unique HUCs to map over, but drop those where a HUC4 was not
@@ -389,7 +391,8 @@ if (config::get(config = general_config)$compile_locations) {
       },
       pattern = cross(a_HUC4_list, a_sites_add_HUC8),
       iteration = "list",
-      packages = c("tidyverse", "sf", "nhdplusTools", "rmapshaper")
+      packages = c("tidyverse", "sf", "nhdplusTools", "rmapshaper"),
+      deployment = "main"
     ),
     
     # Calculate the closest flowline to each river/stream/res/lake/pond site by HUC4
@@ -397,11 +400,6 @@ if (config::get(config = general_config)$compile_locations) {
       name = a_add_NHD_flowline_info,
       command = {
         a_check_dir_structure
-        print('a')
-        print(a_HUC4_list)
-        print('b')
-        print(a_sites_add_HUC8)
-        browser()
         add_NHD_flowline_to_sites(sites_with_huc = a_sites_add_HUC8,
                                   huc4 = a_HUC4_list,
                                   GEE_buffer = as.numeric(b_yml$site_buffer),
@@ -409,7 +407,8 @@ if (config::get(config = general_config)$compile_locations) {
       },
       pattern = cross(a_HUC4_list, a_sites_add_HUC8),
       iteration = "list",
-      packages = c("tidyverse", "sf", "nhdplusTools", "rmapshaper")
+      packages = c("tidyverse", "sf", "nhdplusTools", "rmapshaper"),
+      deployment = "main"
     ),
     
     # And add that waterbody and flowline info to the unique sites with HUC info

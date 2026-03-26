@@ -132,11 +132,21 @@ if (config::get(config = general_config)$run_pekel) {
     tar_target(
       name = b_add_WRS_to_site,
       command = {
-        check_for_containment(WRS_pathrow = b_WRS_pathrows,
-                              locations = b_pekel_locs,
-                              yaml = b_yml)
+        tryCatch(
+          check_for_containment(WRS_pathrow = b_WRS_pathrows,
+                                locations = b_pekel_locs,
+                                yaml = b_yml),
+          error = function(e) {
+            stop(
+              "b_add_WRS_to_site failed for pathrow '", b_WRS_pathrows,
+              "': ", conditionMessage(e),
+              call. = FALSE
+            )
+          }
+        )
       },
-      pattern = map(b_WRS_pathrows)
+      pattern = map(b_WRS_pathrows),
+      error = "continue"
     ),
     
     # after pattern ran, make sure there is only one instance of each site, for
@@ -230,7 +240,14 @@ if (config::get(config = general_config)$run_pekel) {
                                       b_yml$run_date,
                                       "pekel"),
                             full.names = TRUE)
-        test <- map(files, read_csv) %>%
+        test <- map(files, ~read_csv(.x, col_types = cols(
+            `system:index` = col_character(),
+            id = col_character(),
+            occurrence_med = col_double(),
+            occurrence_max = col_double(),
+            occurrence_min = col_double(),
+            .default = col_character()
+          ))) %>%
           bind_rows() %>%
           select(id, occurrence_med, occurrence_max, occurrence_min) %>%
           # add wrs info for proper join with site info

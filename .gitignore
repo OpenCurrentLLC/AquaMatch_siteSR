@@ -48,3 +48,4 @@ env/*
 # Scratch files
 scratch/*
 *.swp
+.aider*
