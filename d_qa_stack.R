@@ -89,10 +89,15 @@ d_qa_stack <- list(
   tar_target(
     name = d_unique_huc2,
     command = {
-      a_sites_with_NHD_info %>%
+      huc2s <- a_sites_with_NHD_info %>%
         filter(siteSR_id %in% b_visible_sites$id) %>%
         distinct(huc2 = str_sub(assigned_HUC, 1, 2)) %>%
         pull(huc2)
+      # Include NA so international sites without HUC assignments are processed
+      if (!NA_character_ %in% huc2s) {
+        huc2s <- c(huc2s, NA_character_)
+      }
+      huc2s
     }
   ),
   

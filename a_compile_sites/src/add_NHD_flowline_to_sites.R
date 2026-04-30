@@ -20,10 +20,10 @@ add_NHD_flowline_to_sites <- function(sites_with_huc,
                                       huc4,
                                       GEE_buffer,
                                       huc8_wbd) {
-  print('c')
-  print(huc4)
-  print('d')
-  print(sites_with_huc)
+  #print('c')
+  #print(huc4)
+  #print('d')
+  #print(sites_with_huc)
   
   message(paste0("Assigning NHD HR flowlines to sites within ", huc4))
   

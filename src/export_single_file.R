@@ -48,6 +48,20 @@ export_single_file <- function(file_path,
     })
   })
   
+  # check if file already exists on Drive and skip upload if so
+  existing <- with_drive_quiet(
+    tryCatch(
+      drive_ls(path = drive_path, pattern = paste0("^", file, "$")),
+      error = function(e) tibble(name = character(), id = character())
+    )
+  )
+  
+  if (nrow(existing) > 0) {
+    message("File '", file, "' already exists on Drive, skipping upload.")
+    out_file <- existing[1, ]
+    return(out_file)
+  }
+  
   # send to Google Drive
   out_file <- drive_put(media = file_path,
                         # The folder on Google Drive

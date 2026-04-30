@@ -211,12 +211,30 @@ if (config::get(config = general_config)$run_pekel) {
         b_check_pekel_folder
         #move files to where they're supposed to be (mike edit)
         files <- drive_ls(path = "~", pattern = "^Pekel_Visibility_")
-        for(i in seq_len(nrow(files))){
-          drive_mv(files$id[i], path = paste0(drive_folder, '/'))
+        if (nrow(files) > 0) {
+          existing <- drive_ls(path = drive_folder)
+          files_to_move <- files %>% filter(!name %in% existing$name)
+          message(nrow(files_to_move), " files to move (", 
+                  nrow(files) - nrow(files_to_move), " already in destination)")
+          for(i in seq_len(nrow(files_to_move))){
+            tryCatch({
+              drive_mv(files_to_move$id[i], path = paste0(drive_folder, '/'))
+            }, error = function(e) {
+              if (grepl("rate limit|userRateLimitExceeded", e$message, ignore.case = TRUE)) {
+                message("Rate limited on file ", i, " of ", nrow(files_to_move), ". Waiting 60s...")
+                Sys.sleep(60)
+                drive_mv(files_to_move$id[i], path = paste0(drive_folder, '/'))
+              } else {
+                stop(e)
+              }
+            })
+            if (i %% 10 == 0) Sys.sleep(2)
+          }
         }
-        # get a list of files in the project file
+        # get a list of files in the project file, deduplicated by name
         drive_ls(path = drive_folder) %>%
-          select(name, id)
+          select(name, id) %>%
+          slice(1, .by = name)
       },
       packages = "googledrive",
       deployment = "main"
